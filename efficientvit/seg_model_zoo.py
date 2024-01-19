@@ -38,6 +38,28 @@ REGISTERED_SEG_MODEL: dict[str, dict[str, str]] = {
 }
 
 
+def get_seg_model(name: str, dataset: str, **kwargs) -> EfficientViTSeg:
+    model_dict = {
+        "b0": efficientvit_seg_b0,
+        "b1": efficientvit_seg_b1,
+        "b2": efficientvit_seg_b2,
+        "b3": efficientvit_seg_b3,
+        #########################
+        "l1": efficientvit_seg_l1,
+        "l2": efficientvit_seg_l2,
+    }
+    model_id = name.split("-")[0]
+    if model_id not in model_dict:
+        raise ValueError(f"Do not find {name} in the model zoo. List of models: {list(model_dict.keys())}")
+    else:
+        model = model_dict[model_id](dataset=dataset, **kwargs)
+
+    if model_id in ["l1", "l2"]:
+        set_norm_eps(model, 1e-7)
+
+    return model
+
+
 def create_seg_model(
     name: str, dataset: str, pretrained=True, weight_url: str or None = None, **kwargs
 ) -> EfficientViTSeg:
@@ -50,7 +72,6 @@ def create_seg_model(
         "l1": efficientvit_seg_l1,
         "l2": efficientvit_seg_l2,
     }
-
     model_id = name.split("-")[0]
     if model_id not in model_dict:
         raise ValueError(f"Do not find {name} in the model zoo. List of models: {list(model_dict.keys())}")
@@ -66,5 +87,5 @@ def create_seg_model(
             raise ValueError(f"Do not find the pretrained weight of {name}.")
         else:
             weight = load_state_dict_from_file(weight_url)
-            model.load_state_dict(weight)
+            model.load_state_dict(weight, strict=True)
     return model
