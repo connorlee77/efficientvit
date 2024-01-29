@@ -26,7 +26,7 @@ __all__ = [
 class ClsHead(OpSequential):
     def __init__(
         self,
-        in_channels: int,
+        in_channels_cls: int,
         width_list: list[int],
         n_classes=1000,
         dropout=0.0,
@@ -35,7 +35,7 @@ class ClsHead(OpSequential):
         fid="stage_final",
     ):
         ops = [
-            ConvLayer(in_channels, width_list[0], 1, norm=norm, act_func=act_func),
+            ConvLayer(in_channels_cls, width_list[0], 1, norm=norm, act_func=act_func),
             nn.AdaptiveAvgPool2d(output_size=1),
             LinearLayer(width_list[0], width_list[1], False, norm="ln", act_func=act_func),
             LinearLayer(width_list[1], n_classes, True, dropout, None, None),
@@ -67,7 +67,7 @@ def efficientvit_cls_b0(**kwargs) -> EfficientViTCls:
     backbone = efficientvit_backbone_b0(**kwargs)
 
     head = ClsHead(
-        in_channels=128,
+        in_channels_cls=128,
         width_list=[1024, 1280],
         **build_kwargs_from_config(kwargs, ClsHead),
     )
@@ -81,7 +81,7 @@ def efficientvit_cls_b1(**kwargs) -> EfficientViTCls:
     backbone = efficientvit_backbone_b1(**kwargs)
 
     head = ClsHead(
-        in_channels=256,
+        in_channels_cls=256,
         width_list=[1536, 1600],
         **build_kwargs_from_config(kwargs, ClsHead),
     )
@@ -95,7 +95,7 @@ def efficientvit_cls_b2(**kwargs) -> EfficientViTCls:
     backbone = efficientvit_backbone_b2(**kwargs)
 
     head = ClsHead(
-        in_channels=384,
+        in_channels_cls=384,
         width_list=[2304, 2560],
         **build_kwargs_from_config(kwargs, ClsHead),
     )
@@ -109,7 +109,7 @@ def efficientvit_cls_b3(**kwargs) -> EfficientViTCls:
     backbone = efficientvit_backbone_b3(**kwargs)
 
     head = ClsHead(
-        in_channels=512,
+        in_channels_cls=512,
         width_list=[2304, 2560],
         **build_kwargs_from_config(kwargs, ClsHead),
     )
@@ -123,7 +123,7 @@ def efficientvit_cls_l1(**kwargs) -> EfficientViTCls:
     backbone = efficientvit_backbone_l1(**kwargs)
 
     head = ClsHead(
-        in_channels=512,
+        in_channels_cls=512,
         width_list=[3072, 3200],
         act_func="gelu",
         **build_kwargs_from_config(kwargs, ClsHead),
@@ -138,7 +138,7 @@ def efficientvit_cls_l2(**kwargs) -> EfficientViTCls:
     backbone = efficientvit_backbone_l2(**kwargs)
 
     head = ClsHead(
-        in_channels=512,
+        in_channels_cls=512,
         width_list=[3072, 3200],
         act_func="gelu",
         **build_kwargs_from_config(kwargs, ClsHead),
@@ -153,7 +153,7 @@ def efficientvit_cls_l3(**kwargs) -> EfficientViTCls:
     backbone = efficientvit_backbone_l3(**kwargs)
 
     head = ClsHead(
-        in_channels=1024,
+        in_channels_cls=1024,
         width_list=[6144, 6400],
         act_func="gelu",
         **build_kwargs_from_config(kwargs, ClsHead),

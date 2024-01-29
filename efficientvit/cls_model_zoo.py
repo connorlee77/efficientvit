@@ -48,6 +48,28 @@ REGISTERED_CLS_MODEL: dict[str, str] = {
     "l3-r384": "assets/checkpoints/cls/l3-r384.pt",
 }
 
+def get_cls_model(name: str, **kwargs) -> EfficientViTCls:
+    model_dict = {
+        "b0": efficientvit_cls_b0,
+        "b1": efficientvit_cls_b1,
+        "b2": efficientvit_cls_b2,
+        "b3": efficientvit_cls_b3,
+        #########################
+        "l1": efficientvit_cls_l1,
+        "l2": efficientvit_cls_l2,
+        "l3": efficientvit_cls_l3,
+    }
+
+    model_id = name.split("-")[0]
+    if model_id not in model_dict:
+        raise ValueError(f"Do not find {name} in the model zoo. List of models: {list(model_dict.keys())}")
+    else:
+        model = model_dict[model_id](**kwargs)
+    if model_id in ["l1", "l2", "l3"]:
+        set_norm_eps(model, 1e-7)
+
+    return model
+
 
 def create_cls_model(name: str, pretrained=True, weight_url: str or None = None, **kwargs) -> EfficientViTCls:
     model_dict = {
